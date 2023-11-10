@@ -1,5 +1,5 @@
 // @deno-types="npm:@xstate/react"
-import { useMachine } from "$npm:@xstate/react";
+import { useMachine } from "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1";
 import { dog } from "../src/state_machines/dog.ts";
 
 export default function DogMachine() {
