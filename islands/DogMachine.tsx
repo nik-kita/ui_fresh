@@ -14,7 +14,7 @@ export default function DogMachine() {
         key={i}
         onClick={() => send(ev)}
         disabled={disabled}
-        type={'button'}
+        type={"button"}
       >
         {ev}
       </button>
