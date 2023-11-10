@@ -28,9 +28,7 @@
     "@preact/signals": "https://esm.sh/*@preact/signals@1.2.1",
     "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.5.0",
     "$std/": "https://deno.land/std@0.206.0/",
-    // @deno-types="npm:@xstate/react"
     "$npm:@xstate/react": "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1",
-    // @deno-types="npm:xstate"
     "$npm:xstate": "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1"
   },
   "compilerOptions": {
