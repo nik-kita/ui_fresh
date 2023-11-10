@@ -36,4 +36,3 @@ jobs:
         with:
           project: "dog-xstate"
           entrypoint: "main.ts" # 📝 Update the entrypoint if necessary
-          root: .
