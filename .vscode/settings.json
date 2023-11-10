@@ -15,6 +15,9 @@
     "editor.defaultFormatter": "denoland.vscode-deno"
   },
   "cSpell.words": [
-    "clsx"
+    "clsx",
+    "preact",
+    "tailwindcss",
+    "xstate"
   ]
 }
