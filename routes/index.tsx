@@ -1,9 +1,7 @@
-import DogMachine from "../islands/DogMachine.tsx";
-
 export default function Home() {
   return (
     <div>
-      <DogMachine />
+      <h1>Hello world</h1>
     </div>
   );
 }
