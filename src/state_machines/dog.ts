@@ -17,6 +17,11 @@ export const dog = createMachine({
     },
     walk: {
       initial: "walking",
+      on: {
+        MAKE_PIPI: {
+          target: "#dog.waiting",
+        },
+      },
       states: {
         walking: {
           on: {

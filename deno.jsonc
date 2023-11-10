@@ -19,7 +19,7 @@
     "@preact/signals": "https://esm.sh/*@preact/signals@1.2.1",
     "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.5.0",
     "$std/": "https://deno.land/std@0.193.0/",
-    "$npm:@xstate/react": "https://esm.sh/@xstate/react/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1"
+    "$npm:@xstate/react": "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1"
   },
   "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" }
 }
