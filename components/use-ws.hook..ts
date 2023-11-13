@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "preact/hooks";
+import { MutableRef, useEffect, useRef } from "preact/hooks";
 import { SugarWs } from "sugar_ws/mod.ts";
 
 export const useWs = ({
@@ -17,29 +17,40 @@ export const useWs = ({
   useEffect(() => {
     if (ws_state_ref.current.processing) return;
 
-    if (ws_state_ref.current.should_be !== "disconnected") {
-      ws_state_ref.current.processing = true;
-
-      connect(
-        ws_state_ref.current.ws,
-        connection_url,
-        ws_state_ref.current.should_be === "reconnected",
-      )
-        .then((ws) => {
-          ws_state_ref.current.ws = ws;
-          ws_state_ref.current.processing = false;
-        });
-    } else {
-      ws_state_ref.current.processing = true;
-
-      disconnect(ws_state_ref.current.ws)
-        .then(() => {
-          ws_state_ref.current.ws = null;
-          ws_state_ref.current.processing = false;
-        });
-    }
+    effect(ws_state_ref, connection_url);
   }, [ws_state_ref.current.should_be, ws_state_ref.current.processing]);
+
+  return {
+    should(be: WsStateRef["should_be"]) {
+      ws_state_ref.current.should_be = be;
+    },
+  };
 };
+
+async function effect(
+  ws_state_ref: MutableRef<WsStateRef>,
+  connection_url: string,
+) {
+  ws_state_ref.current.processing = true;
+
+  if (ws_state_ref.current.should_be !== "disconnected") {
+    const ws = await connect(
+      ws_state_ref.current.ws,
+      connection_url,
+      ws_state_ref.current.should_be === "reconnected",
+    );
+
+    ws_state_ref.current.ws = ws;
+  } else {
+    ws_state_ref.current.processing = true;
+
+    await disconnect(ws_state_ref.current.ws);
+
+    ws_state_ref.current.ws = null;
+  }
+
+  ws_state_ref.current.processing = false;
+}
 
 async function connect(
   ws: SugarWs | null,
