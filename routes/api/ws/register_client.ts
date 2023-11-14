@@ -22,8 +22,6 @@ export async function register_client(client: WebSocket) {
       ],
     ]);
 
-  console.log("opened");
-
   return [sugar, id] as const;
 }
 
