@@ -5,38 +5,53 @@ export const useWs = ({
   connection_url,
   should_be = "disconnected",
 }: {
-  connection_url: `${"ws://" | "wss://"}${string}`;
-  should_be?: WsStateRef["should_be"];
+  connection_url: WsUrl;
+  should_be?: keyof Pick<
+    Record<WsStateRef["should_be"], unknown>,
+    "connected" | "disconnected"
+  >;
 }) => {
   const ws_state_ref = useRef<WsStateRef>({
     ws: null,
+    connection_url,
     processing: false,
     should_be,
+    listeners: [],
   });
 
   useEffect(() => {
     if (ws_state_ref.current.processing) return;
 
-    effect(ws_state_ref, connection_url);
+    effect(ws_state_ref);
   }, [ws_state_ref.current.should_be, ws_state_ref.current.processing]);
 
   return {
-    should(be: WsStateRef["should_be"]) {
+    should(
+      ...[be, new_connection_url]:
+        | [WsStateRef["should_be"]]
+        | [
+          keyof Pick<Record<WsStateRef["should_be"], unknown>, "reconnected">,
+          WsUrl | void,
+        ]
+    ) {
       ws_state_ref.current.should_be = be;
+
+      if (new_connection_url) {
+        ws_state_ref.current.connection_url = new_connection_url;
+      }
     },
   };
 };
 
 async function effect(
   ws_state_ref: MutableRef<WsStateRef>,
-  connection_url: string,
 ) {
   ws_state_ref.current.processing = true;
 
   if (ws_state_ref.current.should_be !== "disconnected") {
     const ws = await connect(
       ws_state_ref.current.ws,
-      connection_url,
+      ws_state_ref.current.connection_url,
       ws_state_ref.current.should_be === "reconnected",
     );
 
@@ -54,7 +69,7 @@ async function effect(
 
 async function connect(
   ws: SugarWs | null,
-  url: string,
+  url: WsUrl,
   even_if_already_connected = false,
 ) {
   if (ws && ws.readyState !== WebSocket.CLOSED) {
@@ -90,6 +105,14 @@ async function disconnect(ws: SugarWs | null) {
 
 type WsStateRef = {
   ws: null | SugarWs;
+  connection_url: WsUrl;
   should_be: "connected" | "disconnected" | "reconnected";
   processing: boolean;
+  listeners: [
+    "on" | "once",
+    "message" | "error" | "open" | "close",
+    EventListener,
+  ][];
 };
+
+type WsUrl = `ws${"s" | ""}://${string}`;
