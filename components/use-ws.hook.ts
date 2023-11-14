@@ -17,6 +17,7 @@ export const useWs = ({
     processing: false,
     should_be,
     listeners: [],
+    rm: new Map(),
   });
 
   useEffect(() => {
@@ -40,6 +41,51 @@ export const useWs = ({
         ws_state_ref.current.connection_url = new_connection_url;
       }
     },
+    add<K extends keyof WebSocketEventMap>(
+      on_or_once: "on" | "once",
+      label: K,
+      cb: K extends "message" ? (message: MessageEvent) => void
+        : EventListener,
+    ) {
+      ws_state_ref.current.listeners.push([
+        cb as EventListener,
+        label,
+        on_or_once,
+      ]);
+
+      const id = Math.random().toString().substring(2) + Date.now();
+
+      ws_state_ref.current.rm.set(id, [label, cb]);
+
+      return id;
+    },
+    rm(id: string) {
+      const target = ws_state_ref.current.rm.get(id);
+
+      if (!target) return;
+
+      if (ws_state_ref.current.ws) {
+        ws_state_ref.current.ws.removeEventListener(
+          target[0],
+          target[1] as EventListener,
+        );
+      }
+
+      ws_state_ref.current.rm.delete(id);
+    },
+    rm_all() {
+      if (ws_state_ref.current.ws) {
+        ws_state_ref.current.listeners.forEach(([cb, label]) => {
+          ws_state_ref.current.ws!.removeEventListener(label, cb);
+        });
+      }
+
+      ws_state_ref.current.listeners.splice(
+        0,
+        ws_state_ref.current.listeners.length,
+      );
+      ws_state_ref.current.rm.clear();
+    },
   };
 };
 
@@ -53,6 +99,7 @@ async function effect(
       ws_state_ref.current.ws,
       ws_state_ref.current.connection_url,
       ws_state_ref.current.should_be === "reconnected",
+      ws_state_ref.current.listeners,
     );
 
     ws_state_ref.current.ws = ws;
@@ -71,8 +118,9 @@ async function connect(
   ws: SugarWs | null,
   url: WsUrl,
   even_if_already_connected = false,
+  listeners: WsStateRef["listeners"],
 ) {
-  if (ws && ws.readyState !== WebSocket.CLOSED) {
+  if (ws) {
     if (ws.readyState === WebSocket.CLOSING) {
       await ws.wait_for("close");
     } else if (ws.readyState === WebSocket.CONNECTING) {
@@ -85,10 +133,14 @@ async function connect(
       if (!even_if_already_connected) return ws;
 
       await ws.wait_for("close").and_close();
+    } else if (ws.readyState === WebSocket.CLOSED) {
+      // nothing to do
     }
   }
 
-  return new SugarWs(url).wait_for("open");
+  return new SugarWs(url)
+    .wait_for("open")
+    .and_add_listeners(listeners);
 }
 
 async function disconnect(ws: SugarWs | null) {
@@ -109,10 +161,11 @@ type WsStateRef = {
   should_be: "connected" | "disconnected" | "reconnected";
   processing: boolean;
   listeners: [
-    "on" | "once",
-    "message" | "error" | "open" | "close",
     EventListener,
+    "message" | "error" | "open" | "close",
+    "on" | "once",
   ][];
+  rm: Map<string, [string, EventListener | ((message: MessageEvent) => void)]>;
 };
 
 type WsUrl = `ws${"s" | ""}://${string}`;
