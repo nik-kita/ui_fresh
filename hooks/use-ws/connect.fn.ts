@@ -17,11 +17,11 @@ export async function connect(ws_state_ref: WsStateRef) {
     } else if (ws.readyState === WebSocket.CONNECTING) {
       await ws.wait_for("open");
 
-      if (!even_if_already_connected) return ws;
+      if (!even_if_already_connected) return;
 
       await ws.wait_for("close").and_close();
     } else if (ws.readyState === WebSocket.OPEN) {
-      if (!even_if_already_connected) return ws;
+      if (!even_if_already_connected) return;
 
       await ws.wait_for("close").and_close();
     } else if (ws.readyState === WebSocket.CLOSED) {
@@ -38,6 +38,4 @@ export async function connect(ws_state_ref: WsStateRef) {
   }
 
   ws_state_ref.send_queue.splice(0, ws_state_ref.send_queue.length);
-
-  return sugar;
 }

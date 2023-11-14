@@ -8,7 +8,7 @@ export default function Chat({
   const ws = useWs({
     connection_url,
     should_be: "connected",
-  });
+  })!;
   const [pre, setPre] = useState("");
 
   ws.add("once", "open", () => setPre("welcome!"));

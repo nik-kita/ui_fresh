@@ -9,17 +9,8 @@ export async function effect(
   ws_state_ref.current.processing = true;
 
   if (ws_state_ref.current.should_be !== "disconnected") {
-    const ws = await connect(
-      ws_state_ref.current.ws,
-      ws_state_ref.current.connection_url,
-      ws_state_ref.current.should_be === "reconnected",
-      ws_state_ref.current.listeners,
-    );
-
-    ws_state_ref.current.ws = ws;
+    await connect(ws_state_ref.current);
   } else {
-    ws_state_ref.current.processing = true;
-
     await disconnect(ws_state_ref.current.ws);
 
     ws_state_ref.current.ws = null;
