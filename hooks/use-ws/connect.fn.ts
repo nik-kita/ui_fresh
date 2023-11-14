@@ -1,9 +1,10 @@
 import { SugarWs } from "sugar_ws/mod.ts";
-import { WsStateRef, WsUrl } from "./types.ts";
+import { http_to_ws } from "./http_to_ws.fn.ts";
+import { WsStateRef } from "./types.ts";
 
 export async function connect(
   ws: SugarWs | null,
-  url: WsUrl,
+  url: string,
   even_if_already_connected = false,
   listeners: WsStateRef["listeners"],
 ) {
@@ -25,7 +26,7 @@ export async function connect(
     }
   }
 
-  return new SugarWs(url)
+  return new SugarWs(http_to_ws(url))
     .wait_for("open")
     .and_add_listeners(listeners);
 }

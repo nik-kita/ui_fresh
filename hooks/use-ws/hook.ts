@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "preact/hooks";
 import { effect } from "./effect.fn.ts";
 import { WsStateRef, WsUrl } from "./types.ts";
+import { http_to_ws } from "./http_to_ws.fn.ts";
 
 export const useWs = ({
   connection_url,
   should_be = "disconnected",
 }: {
-  connection_url: WsUrl;
+  connection_url: string;
   should_be?: keyof Pick<
     Record<WsStateRef["should_be"], unknown>,
     "connected" | "disconnected"
@@ -14,7 +15,7 @@ export const useWs = ({
 }) => {
   const ws_state_ref = useRef<WsStateRef>({
     ws: null,
-    connection_url,
+    connection_url: http_to_ws(connection_url),
     processing: false,
     should_be,
     listeners: [],
