@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "preact/hooks";
 import { effect } from "./effect.fn.ts";
-import { WsStateRef, WsUrl } from "./types.ts";
 import { http_to_ws } from "./http_to_ws.fn.ts";
+import { WsStateRef, WsUrl } from "./types.ts";
+import { IS_BROWSER } from "$fresh/runtime.ts";
 
 export const useWs = ({
   connection_url,
@@ -13,6 +14,8 @@ export const useWs = ({
     "connected" | "disconnected"
   >;
 }) => {
+  if (!IS_BROWSER) return;
+
   const ws_state_ref = useRef<WsStateRef>({
     ws: null,
     connection_url: http_to_ws(connection_url),
@@ -20,6 +23,7 @@ export const useWs = ({
     should_be,
     listeners: [],
     rm: new Map(),
+    send_queue: [],
   });
 
   useEffect(() => {
@@ -41,6 +45,16 @@ export const useWs = ({
 
       if (new_connection_url) {
         ws_state_ref.current.connection_url = new_connection_url;
+      }
+    },
+    send(message: MessageEvent["data"]) {
+      if (
+        ws_state_ref.current.ws &&
+        ws_state_ref.current.ws.readyState === WebSocket.OPEN
+      ) {
+        ws_state_ref.current.ws.send(message);
+      } else {
+        ws_state_ref.current.send_queue.push(message);
       }
     },
     add<K extends keyof WebSocketEventMap>(

@@ -10,6 +10,7 @@ export type WsStateRef = {
     "message" | "error" | "open" | "close",
     "on" | "once",
   ][];
+  send_queue: string[];
   rm: Map<string, [string, EventListener | ((message: MessageEvent) => void)]>;
 };
 
