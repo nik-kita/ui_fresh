@@ -11,7 +11,9 @@ export default function Chat({
     connection_url,
     should_be: "connected",
   });
-  const [messages, set_messages] = useState<string[]>([]);
+  const [messages, set_messages] = useState<{ id: string; message: string }[]>(
+    [],
+  );
   const form_ref = useRef<HTMLFormElement>(null);
   const input_message_ref = useRef<HTMLInputElement>(null);
   const handle_form_submit: JSX.GenericEventHandler<HTMLFormElement> = (ev) => {
@@ -26,31 +28,41 @@ export default function Chat({
   };
 
   ws.add("on", "message", ({ data }) => {
-    set_messages((prev) => [...prev, data]);
-    console.log(messages);
+    set_messages((prev) => [...prev, JSON.parse(data)]);
   });
 
   return (
-    <div>
-      <ul>
-        {...messages.map((m) => {
+    <div class="h-full">
+      <ul
+        class={"min-h-[80%] odd:border-slate-800 even:border-slate-600 bg-slate-600 text-white"}
+      >
+        {...messages.map(({ id, message }) => {
           return (
-            <li key={++messages_id}>
+            <li key={id + ++messages_id} style={{ backgroundColor: id }}>
               <pre>
-              {m}
+              {message}
               </pre>
             </li>
           );
         })}
       </ul>
       <hr />
-      <form ref={form_ref} onSubmit={handle_form_submit}>
+      <form
+        class={"h-full flex flex-col gap-4 px-5"}
+        ref={form_ref}
+        onSubmit={handle_form_submit}
+      >
         <input
+          class={"py-2 px-1 bg-slate-100 text-slate-1000"}
           ref={input_message_ref}
           type="text"
           placeholder={"write message..."}
         />
-        <input type="submit" value="send" />
+        <input
+          class={"bg-slate-900 hover:bg-slate-800 text-slate-100"}
+          type="submit"
+          value="send"
+        />
       </form>
     </div>
   );

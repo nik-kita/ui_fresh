@@ -23,5 +23,5 @@ export async function register_client(client: WebSocket) {
 
 // TODO
 function gen_id() {
-  return Math.random().toString().substring(2) + Date.now();
+  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 }

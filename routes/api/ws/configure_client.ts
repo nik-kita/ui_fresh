@@ -13,7 +13,10 @@ export function configure_client({
     Array.from(id_sugar.entries()).forEach(([friend_id, friend]) => {
       if (friend_id === id) return;
 
-      friend.send(data);
+      friend.send(JSON.stringify({
+        id,
+        message: data,
+      }));
     });
   });
 }

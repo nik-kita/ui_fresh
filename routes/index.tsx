@@ -5,7 +5,7 @@ export default function Home({
   url,
 }: Props) {
   return (
-    <div>
+    <div class={"h-screen"}>
       <Chat connection_url={`${url.origin}/api/ws`} />
     </div>
   );
