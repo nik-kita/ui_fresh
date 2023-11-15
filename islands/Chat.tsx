@@ -11,7 +11,9 @@ export default function Chat({
     connection_url,
     should_be: "connected",
   });
-  const [messages, set_messages] = useState<{ id: string; message: string }[]>(
+  const [messages, set_messages] = useState<
+    { id: string; message: string; own?: true }[]
+  >(
     [],
   );
   const form_ref = useRef<HTMLFormElement>(null);
@@ -23,7 +25,7 @@ export default function Chat({
 
     if (message) {
       ws.send(message.trim().replaceAll("  ", " ").replaceAll("\n\n", "\n"));
-      set_messages((prev) => [...prev, { message, id: '#fffff' }]);
+      set_messages((prev) => [...prev, { message, id: "#000000", own: true }]);
       input_message_ref.current!.value = "";
     }
   };
@@ -37,10 +39,19 @@ export default function Chat({
       <ul
         class={"min-h-[80%] odd:border-slate-800 even:border-slate-600 bg-slate-600 text-white"}
       >
-        {...messages.map(({ id, message }) => {
+        {...messages.map(({ id, message, own }) => {
           return (
-            <li key={id + ++messages_id} style={{ backgroundColor: id }}>
-              <pre>
+            <li
+              class={`flex ${own ? "justify-end" : "justify-start"}`}
+              key={id + ++messages_id}
+            >
+              <pre
+                style={{
+                  backgroundColor: id,
+                  color: is_hex_light(id) ? "black" : "white",
+                }}
+                class={"px-2 py-1 rounded-full inline-block mt-2"}
+              >
               {message}
               </pre>
             </li>
@@ -72,3 +83,13 @@ export default function Chat({
 type Props = {
   connection_url: string;
 };
+
+function is_hex_light(color: string) {
+  const hex = color.replace("#", "");
+  const c_r = parseInt(hex.substring(0, 0 + 2), 16);
+  const c_g = parseInt(hex.substring(2, 2 + 2), 16);
+  const c_b = parseInt(hex.substring(4, 4 + 2), 16);
+  const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+
+  return brightness > 155;
+}
