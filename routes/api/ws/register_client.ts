@@ -11,7 +11,7 @@ export async function register_client(client: WebSocket) {
 
   await sugar
     .wait_for("open")
-    .and_add_listeners([
+    .and_add_listeners(() => [
       [
         () => {
           id_sugar.delete(id);
