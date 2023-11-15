@@ -60,7 +60,7 @@ export default function Chat({
       </ul>
       <hr />
       <form
-        class={"h-full flex flex-col gap-4 px-5"}
+        class={"h-max-[20%] flex flex-col gap-4 px-5"}
         ref={form_ref}
         onSubmit={handle_form_submit}
       >
