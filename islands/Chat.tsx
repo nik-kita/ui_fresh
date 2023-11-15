@@ -23,6 +23,7 @@ export default function Chat({
 
     if (message) {
       ws.send(message.trim().replaceAll("  ", " ").replaceAll("\n\n", "\n"));
+      set_messages((prev) => [...prev, { message, id: '#fffff' }]);
       input_message_ref.current!.value = "";
     }
   };
