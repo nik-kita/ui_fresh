@@ -11,16 +11,12 @@ export async function register_client(client: WebSocket) {
 
   await sugar
     .wait_for("open")
-    .and_add_listeners(() => [
-      [
-        () => {
-          id_sugar.delete(id);
-          sugar_id.delete(sugar);
-        },
-        "close",
-        "once",
-      ],
-    ]);
+    .and((s) => {
+      s.once("close", () => {
+        id_sugar.delete(id);
+        sugar_id.delete(sugar);
+      });
+    });
 
   return [sugar, id] as const;
 }

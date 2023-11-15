@@ -30,7 +30,11 @@ export async function connect(ws_state_ref: WsStateRef) {
 
   ws_state_ref.ws = await new SugarWs(http_to_ws(connection_url))
     .wait_for("open")
-    .and_add_listeners(() => listeners);
+    .and((s) =>
+      listeners.forEach(([cb, label, on]) => {
+        s[on](label, cb);
+      })
+    );
 
   for (let i = ws_state_ref.send_queue.length - 1; i !== -1; --i) {
     ws_state_ref.ws.send(ws_state_ref.send_queue[i]);
