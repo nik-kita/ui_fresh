@@ -12,8 +12,7 @@ import * as $$1 from "./islands/hooks/use-ws/connect.fn.ts";
 import * as $$2 from "./islands/hooks/use-ws/disconnect.fn.ts";
 import * as $$3 from "./islands/hooks/use-ws/effect.fn.ts";
 import * as $$4 from "./islands/hooks/use-ws/hook.ts";
-import * as $$5 from "./islands/hooks/use-ws/http_to_ws.fn.ts";
-import * as $$6 from "./islands/hooks/use-ws/types.ts";
+import * as $$5 from "./islands/hooks/use-ws/types.ts";
 
 const manifest = {
   routes: {
@@ -29,8 +28,7 @@ const manifest = {
     "./islands/hooks/use-ws/disconnect.fn.ts": $$2,
     "./islands/hooks/use-ws/effect.fn.ts": $$3,
     "./islands/hooks/use-ws/hook.ts": $$4,
-    "./islands/hooks/use-ws/http_to_ws.fn.ts": $$5,
-    "./islands/hooks/use-ws/types.ts": $$6,
+    "./islands/hooks/use-ws/types.ts": $$5,
   },
   baseUrl: import.meta.url,
 };

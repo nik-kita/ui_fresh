@@ -1,4 +1,4 @@
-import { WsUrl } from "./types.ts";
+import { WsUrl } from "../islands/hooks/use-ws/types.ts";
 
 export const http_to_ws = (url: string) => {
   if (url.substring(0, 2) === "ws") return url as WsUrl;
