@@ -9,13 +9,12 @@ export function configure_client({
   sugar: SugarWs;
 }) {
   db_service._KV.listenQueue((something) => {
-    console.log("something", something);
     if (MessageFromUser.is(something)) {
       if (something.from_user === id) {
         return;
       }
 
-      sugar.send_if_open(something.message);
+      sugar.send_if_open(JSON.stringify(something.message));
     }
   });
   sugar.on("message", ({ data }) => {

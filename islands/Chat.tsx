@@ -1,6 +1,8 @@
 import { useRef, useState } from "preact/hooks";
 import { useWs } from "./hooks/use-ws/hook.ts";
 import { JSX } from "preact/jsx-runtime";
+import { tw } from "../utils/tw.ts";
+import { is_hex_dark } from "../utils/is_hex_dark.ts";
 
 let messages_id = 0;
 
@@ -11,6 +13,7 @@ export default function Chat({
     connection_url,
     should_be: "connected",
   });
+  const [is_online, set_is_online] = useState(false);
   const [messages, set_messages] = useState<
     { id: string; message: string; own?: true }[]
   >(
@@ -18,26 +21,59 @@ export default function Chat({
   );
   const form_ref = useRef<HTMLFormElement>(null);
   const input_message_ref = useRef<HTMLInputElement>(null);
+  const me_ref = useRef<{ id: string } | null>(null);
   const handle_form_submit: JSX.GenericEventHandler<HTMLFormElement> = (ev) => {
     ev.preventDefault();
 
     const message = input_message_ref.current!.value;
 
     if (message) {
-      ws.send(message.trim().replaceAll("  ", " ").replaceAll("\n\n", "\n"));
-      set_messages((prev) => [...prev, { message, id: "#000000", own: true }]);
+      if (me_ref.current) {
+        ws.send({
+          message: message.trim().replaceAll("  ", " ").replaceAll(
+            "\n\n",
+            "\n",
+          ),
+          id: me_ref.current.id,
+        });
+      }
+      set_messages((
+        prev,
+      ) => [...prev, {
+        message,
+        id: me_ref.current?.id || "#000000",
+        own: true,
+      }]);
       input_message_ref.current!.value = "";
     }
   };
 
+  ws.add("once", "open", () => {
+    set_is_online(true);
+  });
+  ws.add("once", "close", () => {
+    set_is_online(false);
+  });
   ws.add("on", "message", ({ data }) => {
-    set_messages((prev) => [...prev, JSON.parse(data)]);
+    const jData = JSON.parse(data);
+
+    if (!me_ref.current) {
+      me_ref.current = { id: jData.id };
+
+      return;
+    }
+
+    set_messages((prev) => [...prev, jData]);
   });
 
   return (
     <div class="h-full">
       <ul
-        class={"min-h-[80%] odd:border-slate-800 even:border-slate-600 bg-slate-600 text-white"}
+        class={tw(
+          `min-h-[80%] odd:border-slate-800 even:border-slate-600  text-white ${
+            is_online ? "bg-green-400" : "bg-yellow-400"
+          }`,
+        )}
       >
         {...messages.map(({ id, message, own }) => {
           return (
@@ -48,7 +84,7 @@ export default function Chat({
               <pre
                 style={{
                   backgroundColor: id,
-                  color: is_hex_light(id) ? "black" : "white",
+                  color: is_hex_dark(id || "#ffffff") ? "white" : "black",
                 }}
                 class={"px-2 py-1 rounded-full inline-block mt-2"}
               >
@@ -83,13 +119,3 @@ export default function Chat({
 type Props = {
   connection_url: string;
 };
-
-function is_hex_light(color: string) {
-  const hex = color.replace("#", "");
-  const c_r = parseInt(hex.substring(0, 0 + 2), 16);
-  const c_g = parseInt(hex.substring(2, 2 + 2), 16);
-  const c_b = parseInt(hex.substring(4, 4 + 2), 16);
-  const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
-
-  return brightness > 155;
-}

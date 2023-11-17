@@ -12,6 +12,8 @@ export async function register_client(client: WebSocket) {
   await sugar
     .wait_for("open")
     .and((s) => {
+      s.send(JSON.stringify({ id: gen_hex() }));
+
       s.once("close", async () => {
         await db_service.rm_online_user(id);
       });
