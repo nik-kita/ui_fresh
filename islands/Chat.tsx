@@ -29,13 +29,13 @@ export default function Chat({
 
     if (message) {
       if (me_ref.current) {
-        ws.send({
+        ws.send(JSON.stringify({
           message: message.trim().replaceAll("  ", " ").replaceAll(
             "\n\n",
             "\n",
           ),
           id: me_ref.current.id,
-        });
+        }));
       }
       set_messages((
         prev,
