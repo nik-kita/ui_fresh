@@ -15,14 +15,13 @@ export function configure_client({
         return;
       }
 
-      sugar.send_if_open(JSON.stringify(something.message));
+      sugar.send_if_open(JSON.stringify(something));
     }
   });
   sugar.on("message", ({ data }) => {
     db_service._KV.enqueue({
       _: "message_from_user",
-      from_user: id,
-      message: JSON.parse(data),
-    });
+      ...JSON.parse(data),
+    }, { keysIfUndelivered: [["messages", Date.now()]] });
   });
 }
