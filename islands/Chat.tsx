@@ -12,7 +12,7 @@ export default function Chat({
   const ws = useWs({
     connection_url,
     should_be: "connected",
-  });
+  })!;
   const [is_online, set_is_online] = useState(false);
   const [messages, set_messages] = useState<
     { id: string; message: string; own?: true }[]

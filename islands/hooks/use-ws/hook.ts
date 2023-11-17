@@ -2,6 +2,7 @@ import { useEffect, useRef } from "preact/hooks";
 import { effect } from "./effect.fn.ts";
 import { http_to_ws } from "./http_to_ws.fn.ts";
 import { WsStateRef, WsUrl } from "./types.ts";
+import { IS_BROWSER } from "$fresh/runtime.ts";
 
 export const useWs = ({
   connection_url,
@@ -13,6 +14,7 @@ export const useWs = ({
     "connected" | "disconnected"
   >;
 }) => {
+  if (!IS_BROWSER) return;
   const ws_state_ref = useRef<WsStateRef>({
     ws: null,
     connection_url: http_to_ws(connection_url),
