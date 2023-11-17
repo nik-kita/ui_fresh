@@ -21,7 +21,7 @@ export function configure_client({
     db_service._KV.enqueue({
       _: "message_from_user",
       from_user: id,
-      message: data,
+      message: JSON.parse(data),
     });
   });
 }
