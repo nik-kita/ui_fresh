@@ -5,11 +5,8 @@
 import * as $0 from "./routes/_404.tsx";
 import * as $1 from "./routes/_app.tsx";
 import * as $2 from "./routes/_middleware.ts";
-import * as $3 from "./routes/api/ws/configure_client.ts";
-import * as $4 from "./routes/api/ws/index.ts";
-import * as $5 from "./routes/api/ws/online.ts";
-import * as $6 from "./routes/api/ws/register_client.ts";
-import * as $7 from "./routes/index.tsx";
+import * as $3 from "./routes/api/ws/index.ts";
+import * as $4 from "./routes/index.tsx";
 import * as $$0 from "./islands/Chat.tsx";
 import * as $$1 from "./islands/hooks/use-ws/connect.fn.ts";
 import * as $$2 from "./islands/hooks/use-ws/disconnect.fn.ts";
@@ -23,11 +20,8 @@ const manifest = {
     "./routes/_404.tsx": $0,
     "./routes/_app.tsx": $1,
     "./routes/_middleware.ts": $2,
-    "./routes/api/ws/configure_client.ts": $3,
-    "./routes/api/ws/index.ts": $4,
-    "./routes/api/ws/online.ts": $5,
-    "./routes/api/ws/register_client.ts": $6,
-    "./routes/index.tsx": $7,
+    "./routes/api/ws/index.ts": $3,
+    "./routes/index.tsx": $4,
   },
   islands: {
     "./islands/Chat.tsx": $$0,

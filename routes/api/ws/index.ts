@@ -1,6 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
-import { configure_client } from "./configure_client.ts";
-import { register_client } from "./register_client.ts";
+import { configure_client } from "../../../src/configure_client.ts";
+import { register_client } from "../../../src/register_client.ts";
 
 export const handler: Handlers = {
   async GET(req) {

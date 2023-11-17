@@ -5,7 +5,7 @@ import { WsStateRef, WsUrl } from "./types.ts";
 
 export const useWs = ({
   connection_url,
-  should_be = "disconnected",
+  should_be: _should_be = "disconnected",
 }: {
   connection_url: string;
   should_be?: keyof Pick<
@@ -17,7 +17,7 @@ export const useWs = ({
     ws: null,
     connection_url: http_to_ws(connection_url),
     processing: false,
-    should_be,
+    should_be: _should_be,
     listeners: [],
     rm: new Map(),
     send_queue: [],
@@ -31,14 +31,14 @@ export const useWs = ({
 
   return {
     should(
-      ...[be, new_connection_url]:
+      ...[should_be, new_connection_url]:
         | [WsStateRef["should_be"]]
         | [
           keyof Pick<Record<WsStateRef["should_be"], unknown>, "reconnected">,
           WsUrl | void,
         ]
     ) {
-      ws_state_ref.current.should_be = be;
+      ws_state_ref.current.should_be = should_be;
 
       if (new_connection_url) {
         ws_state_ref.current.connection_url = new_connection_url;
