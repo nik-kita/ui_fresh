@@ -11,7 +11,9 @@ export function configure_client({
   db_service._KV.listenQueue((something) => {
     console.log(something);
     if (MessageFromUser.is(something)) {
-      if (something.from_user === id) {
+      console.log(id);
+      // deno-lint-ignore no-explicit-any
+      if ((something as any).id === id) {
         return;
       }
 
