@@ -9,6 +9,7 @@ export function configure_client({
   sugar: SugarWs;
 }) {
   db_service._KV.listenQueue((something) => {
+    console.log(something);
     if (MessageFromUser.is(something)) {
       if (something.from_user === id) {
         return;
