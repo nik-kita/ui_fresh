@@ -1,3 +1,4 @@
+import { useState } from "preact/hooks";
 import { tw } from "../utils/tw.ts";
 import { useWs } from "./hooks/useWs.ts";
 
@@ -7,7 +8,18 @@ export default function Chat({
   const {
     is_online,
     turn,
+    send,
+    on,
   } = useWs(connection_url);
+  const [last_message, set_last_message] = useState("");
+
+  on("message", ({ data }: MessageEvent) => {
+    set_last_message(data);
+  });
+
+  const monitor = {
+    last_message,
+  };
 
   return (
     <div
@@ -17,20 +29,20 @@ export default function Chat({
         "bg-green-500": is_online,
       })}
     >
-      <h1>Hello world</h1>
-      <h1>{is_online ? "online" : "offline"}</h1>
       <div
         class={tw(
-          "flex justify-center items-center border-2 border-slate-500 h-full",
+          "flex flex-col justify-center items-center h-full gap-5",
         )}
       >
         <button
+          class={tw("border-4 p-2 border-slate-500")}
           onClick={() => {
             turn(is_online ? "off" : "on");
           }}
         >
-          Click!
+          {is_online ? "disconnect from" : "connect to"} websocket
         </button>
+        <pre>{JSON.stringify(monitor, null, 2)}</pre>
       </div>
     </div>
   );
