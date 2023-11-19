@@ -1,27 +1,20 @@
+import { useEffect, useRef, useState } from "preact/hooks";
 import { SugarWs } from "sugar_ws/mod.ts";
-import { useRef, useState } from "preact/hooks";
 
 const {
-  CONNECTING,
-  OPEN,
   CLOSING,
   CLOSED,
 } = WebSocket;
-const READY_STATE = {
-  CONNECTING,
-  OPEN,
-  CLOSING,
-  CLOSED,
-} as const;
 
 export function useWs(url: string) {
   const x = useRef({
     ws: null as null | SugarWs,
     listeners: new Map<string, {
       on_or_once: "on" | "once";
-      label: string;
+      label: keyof WebSocketEventMap;
       listener: EvL;
       options?: boolean | AddEventListenerOptions;
+      rm_once?: () => void;
     }>(),
   });
   const [
@@ -33,9 +26,58 @@ export function useWs(url: string) {
     set_is_online,
   ] = useState(false);
   const [
-    processing,
-    set_processing,
-  ] = useState(false);
+    check_needed,
+    make_check,
+  ] = useState(true);
+
+  useEffect(() => {
+    const { ws } = x.current;
+
+    if (on_or_off === "on") {
+      if (
+        !ws ||
+        (ws && (ws.readyState === CLOSING || ws.readyState === CLOSED))
+      ) {
+        const prev = x.current.ws!;
+
+        x.current.ws = new SugarWs(url);
+        x.current.ws.wait_for("open").then(() => set_is_online(true));
+        x.current.listeners.forEach((l) => {
+          const {
+            label,
+            listener,
+            on_or_once,
+            options,
+          } = l;
+          const rm_once_or_void = x.current.ws![on_or_once](
+            label,
+            listener as EventListener,
+            options,
+          );
+
+          if (on_or_once === "once") l.rm_once = rm_once_or_void as () => void;
+        });
+
+        x.current.ws.once("close", () => {
+          set_is_online(false);
+          x.current.ws = null;
+          make_check((prev) => !prev);
+        });
+
+        prev.close();
+      }
+    } else {
+      if (ws && (ws.readyState !== CLOSING || ws.readyState as 3 !== CLOSED)) {
+        ws.close();
+      }
+    }
+
+    return () => {
+      if (ws && (ws.readyState !== CLOSING || ws.readyState as 3 !== CLOSED)) {
+        ws.close();
+      }
+    };
+  }, [on_or_off, check_needed]);
 
   return {
     is_online,
@@ -43,13 +85,17 @@ export function useWs(url: string) {
     on([label, listener, options]: Parameters<SugarWs["once"]>) {
       const key = `on::${label}::${listener.toString()}`;
 
-      if (x.current.listeners.has(key)) {
-        x.current.listeners.set(key, {
-          label,
-          listener,
-          on_or_once: "on",
-          options,
-        });
+      if (x.current.listeners.has(key)) return key;
+
+      x.current.listeners.set(key, {
+        label,
+        listener,
+        on_or_once: "on",
+        options,
+      });
+
+      if (x.current.ws) {
+        x.current.ws.on(label, listener as EventListener, options);
       }
 
       return key;
@@ -57,14 +103,18 @@ export function useWs(url: string) {
     once([label, listener, options]: Parameters<SugarWs["once"]>) {
       const key = `once::${label}::${listener.toString()}`;
 
-      if (!x.current.listeners.has(key)) {
-        x.current.listeners.set(key, {
-          label,
-          listener,
-          on_or_once: "once",
-          options,
-        });
+      if (x.current.listeners.has(key)) return key;
+
+      if (x.current.ws) {
+        x.current.ws.once(label, listener, options);
       }
+
+      x.current.listeners.set(key, {
+        label,
+        listener,
+        on_or_once: "once",
+        options,
+      });
 
       return key;
     },
@@ -74,10 +124,17 @@ export function useWs(url: string) {
       if (!rm_target) return false;
 
       x.current.listeners.delete(key);
-      x.current.ws?.removeEventListener(
-        rm_target.label,
-        rm_target.listener as EventListenerOrEventListenerObject,
-      );
+
+      if (x.current.ws) {
+        if (rm_target.rm_once) {
+          rm_target.rm_once();
+        } else {
+          x.current.ws.removeEventListener(
+            rm_target.label,
+            rm_target.listener as EventListenerOrEventListenerObject,
+          );
+        }
+      }
 
       return true;
     },
