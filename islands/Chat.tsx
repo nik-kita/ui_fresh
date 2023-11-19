@@ -11,10 +11,11 @@ export default function Chat({
     send,
     on,
   } = useWs(connection_url);
-  const [last_message, set_last_message] = useState("");
+  const [last_message, set_last_message] = useState<object>({});
 
   on("message", ({ data }: MessageEvent) => {
-    set_last_message(data);
+    const jData = JSON.parse(data);
+    set_last_message(jData);
   });
 
   const monitor = {
