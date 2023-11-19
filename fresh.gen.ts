@@ -7,7 +7,8 @@ import * as $1 from "./routes/_app.tsx";
 import * as $2 from "./routes/api/ws/index.ts";
 import * as $3 from "./routes/index.tsx";
 import * as $$0 from "./islands/Chat.tsx";
-import * as $$1 from "./islands/hooks/useWs.ts";
+import * as $$1 from "./islands/ChatGrid.tsx";
+import * as $$2 from "./islands/hooks/useWs.ts";
 
 const manifest = {
   routes: {
@@ -18,7 +19,8 @@ const manifest = {
   },
   islands: {
     "./islands/Chat.tsx": $$0,
-    "./islands/hooks/useWs.ts": $$1,
+    "./islands/ChatGrid.tsx": $$1,
+    "./islands/hooks/useWs.ts": $$2,
   },
   baseUrl: import.meta.url,
 };

@@ -106,7 +106,7 @@ export function useWs(url: string) {
 
       return key;
     },
-    once([label, listener, options]: Parameters<SugarWs["once"]>) {
+    once(...[label, listener, options]: Parameters<SugarWs["once"]>) {
       const key = `once::${label}::${listener.toString()}`;
 
       if (x.current.listeners.has(key)) return key;
