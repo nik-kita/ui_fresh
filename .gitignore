@@ -10,3 +10,4 @@ _fresh/
 
 # local KV storage
 kv-local
+kv-local.sqlite
