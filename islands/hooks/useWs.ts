@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { SugarWs } from "sugar_ws/mod.ts";
+import { http_to_ws } from "../../utils/http_to_ws.fn.ts";
 
 const {
   CLOSING,
@@ -38,9 +39,9 @@ export function useWs(url: string) {
         !ws ||
         (ws && (ws.readyState === CLOSING || ws.readyState === CLOSED))
       ) {
-        const prev = x.current.ws!;
+        const prev = x.current.ws;
 
-        x.current.ws = new SugarWs(url);
+        x.current.ws = new SugarWs(http_to_ws(url));
         x.current.ws.wait_for("open").then(() => set_is_online(true));
         x.current.listeners.forEach((l) => {
           const {
@@ -64,7 +65,7 @@ export function useWs(url: string) {
           make_check((prev) => !prev);
         });
 
-        prev.close();
+        prev?.close();
       }
     } else {
       if (ws && (ws.readyState !== CLOSING || ws.readyState as 3 !== CLOSED)) {

@@ -7,3 +7,6 @@
 
 # Fresh build directory
 _fresh/
+
+# local KV storage
+kv-local

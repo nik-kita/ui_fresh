@@ -7,21 +7,41 @@
     "preview": "deno run --unstable -A main.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update .",
     "tw": "npx tailwindcss -i ./input.css -o static/output.css --watch",
-    "tw:build": "npx tailwindcss -i ./input.css -o static/styles.css"
+    "tw:build": "npx tailwindcss -i ./input.css -o static/output.css"
   },
-  "lint": { "rules": { "tags": ["fresh", "recommended"] } },
-  "exclude": ["**/_fresh/*"],
+  "lint": {
+    "rules": {
+      "tags": [
+        "fresh",
+        "recommended"
+      ]
+    }
+  },
+  "exclude": [
+    "**/_fresh/*"
+  ],
+  "test": {
+    "include": [
+      "__test__"
+    ]
+  },
   "imports": {
+    "preact/": "https://esm.sh/preact@10.18.1/",
     "sugar_ws/": "https://deno.land/x/sugar_ws@v0.5.0/",
     "$fresh/": "https://deno.land/x/fresh@1.5.4/",
     "preact": "https://esm.sh/preact@10.18.1",
-    "preact/": "https://esm.sh/preact@10.18.1/",
     "preact-render-to-string": "https://esm.sh/*preact-render-to-string@6.2.2",
     "@preact/signals": "https://esm.sh/*@preact/signals@1.2.1",
     "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.5.0",
     "$std/": "https://deno.land/std@0.206.0/",
     "$npm:@xstate/react": "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1",
-    "$npm:xstate": "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1"
+    "$npm:xstate": "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1",
+    "$npm:clsx": "https://esm.sh/clsx@2.0.0",
+    "$npm:tw-merge": "https://esm.sh/tailwind-merge@2.0.0",
+    "ulid": "https://deno.land/x/ulid@v0.3.0/mod.ts"
   },
-  "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" }
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  }
 }
