@@ -3,10 +3,10 @@ import { tw } from "../utils/tw.ts";
 import Chat from "./Chat.tsx";
 
 export default function ChatGrid({ connection_url }: Props) {
-  const [chats, set_chats] = useState<number[]>([]);
+  const [chats, set_chats] = useState<number[]>([1]);
 
   return (
-    <div class={tw("h-full flex flex-col justify-center")}>
+    <div class={tw("h-full w-full flex flex-col justify-center")}>
       <button
         onClick={() => {
           set_chats((prev) => [...prev, 1]);
