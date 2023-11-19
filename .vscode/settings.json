@@ -1,5 +1,6 @@
 {
   "deno.enable": true,
+  "deno.unstable": true,
   "deno.lint": true,
   "editor.defaultFormatter": "denoland.vscode-deno",
   "[typescriptreact]": {
@@ -17,6 +18,7 @@
   "cSpell.words": [
     "clsx",
     "preact",
+    "sugarize",
     "tailwindcss",
     "xstate"
   ]
