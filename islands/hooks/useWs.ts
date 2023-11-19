@@ -83,7 +83,12 @@ export function useWs(url: string) {
   return {
     is_online,
     turn: set_or_on_off,
-    on([label, listener, options]: Parameters<SugarWs["once"]>) {
+    send(message: string) {
+      if (x.current.ws) {
+        x.current.ws.send_if_open(message);
+      }
+    },
+    on(...[label, listener, options]: Parameters<SugarWs["once"]>) {
       const key = `on::${label}::${listener.toString()}`;
 
       if (x.current.listeners.has(key)) return key;
