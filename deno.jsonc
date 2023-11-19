@@ -35,7 +35,7 @@
     "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.5.0",
     "$std/": "https://deno.land/std@0.206.0/",
     "$npm:@xstate/react": "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1",
-    "$npm:xstate": "https://esm.sh/@xstate/react@3.2.2/dist/xstate-react.umd.min.js?alias=react:preact/compat&deps=preact@10.18.1",
+    "$npm:xstate": "https://esm.sh/xstate/dist/xstate.js",
     "$npm:clsx": "https://esm.sh/clsx@2.0.0",
     "$npm:tw-merge": "https://esm.sh/tailwind-merge@2.0.0",
     "ulid": "https://deno.land/x/ulid@v0.3.0/mod.ts"
